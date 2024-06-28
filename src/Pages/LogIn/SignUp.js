@@ -1,56 +1,73 @@
-import React, { useEffect } from 'react';
-import { useSignInWithEmailAndPassword, useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import React from 'react';
+import { useCreateUserWithEmailAndPassword, useSignInWithGoogle, useUpdateProfile } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import Loading from '../Shared/Loading';
 
-const LogIn = () => {
+const SignUp = () => {
 
     const navigate = useNavigate();
-    const location = useLocation();
     const { register, formState: { errors }, handleSubmit,} = useForm();
     const [signInWithGoogle, gUser, gLoading, gError] = useSignInWithGoogle(auth);
     const [
-        signInWithEmailAndPassword,
+        createUserWithEmailAndPassword,
         user,
         loading,
         error,
-    ] = useSignInWithEmailAndPassword(auth);
+    ] = useCreateUserWithEmailAndPassword(auth);
+    const [updateProfile, updating, updateError] = useUpdateProfile(auth);
     let signInError ;
 
-    let from = location.state?.from?.pathname || "/";
-
-    useEffect(() => {
-        if(user || gUser){
-            navigate(from, { replace: true });
-            // console.log(user || gUser);
-        }
-    } , [user, gUser, navigate, from]);
-
-    if(loading || gLoading){
+    if(loading || gLoading || updating){
         return <Loading/>
     }
 
-    if(error || gError){
+    if(error || gError || updateError){
         signInError = <p className='text-red-500'>
-            <small>{error?.message || gError?.message}</small>
+            <small>{error?.message || gError?.message || updateError?.message}</small>
         </p>
     }
 
+    if(user || gUser){
+        console.log(user || gUser);
+    }
 
-    const onSubmit = (data) => {
+    const onSubmit = async data => {
         // console.log(data);
-        signInWithEmailAndPassword(data.email, data.password);
+        await createUserWithEmailAndPassword(data.email, data.password);
+        await updateProfile({ displayName: data.name });
+        console.log('Updated profile');
+        navigate('/appointment');
     }
 
     return (
-        <div className='flex justify-center items-center h-screen'>
+        <div className='flex justify-center items-centet'>
             <div className="card bg-base-100 w-96 shadow-xl">
                 <div className="card-body">
-                    <h2 className=" text-2xl font-bold text-center">LogIn</h2>
-                    
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                    <h2 className=" text-2xl font-bold text-center">Sign Up</h2>
+
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-5">
+                        <label className="form-control w-full max-w-xs">
+                            <div className="label">
+                                <span className="label-text">Name</span>
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Your Name"
+                                className="input input-bordered w-full max-w-xs bg-white"
+                                {...register("name", {
+                                    required: {
+                                        value: true,
+                                        message: "Name is Required"
+                                    }
+                                })}
+                            />
+                            <div className="label">
+                                {errors.name?.type === "required" && (<span className="label-text-alt text-red-500">{errors.name.message}</span>)}
+                            </div>
+                        </label>
+
                         <label className="form-control w-full max-w-xs">
                             <div className="label">
                                 <span className="label-text">Email</span>
@@ -101,18 +118,18 @@ const LogIn = () => {
                             </div>
                         </label>
 
-                         {/* Display Sign-In Error Message */}
+                        {/* Display Sign-In Error Message */}
                         {signInError}
 
-                        {/* <input type="submit" className="btn w-full max-w-xs" value="Login"/> */}
+                        {/* <input type="submit" className="btn w-full max-w-xs" value="Sign Up"/> */}
                         <input
                             type="submit"
                             className="btn w-full max-w-xs px-4 py-2 font-semibold text-white bg-gray-800 rounded-md hover:bg-gray-900 focus:outline-none focus:ring focus:ring-gray-300" 
-                            value="Login" 
+                            value="Sign Up" 
                         />
                     </form>
 
-                    <p><small>New to Doctors Portal? <Link className="text-primary" to="/signUp">Create new account</Link></small></p>
+                    <div><small>Already have an Account? <Link className="text-primary" to="/login">Please Login</Link></small></div>
 
                     <div className="divider">OR</div>
 
@@ -126,4 +143,4 @@ const LogIn = () => {
     );
 };
 
-export default LogIn;
+export default SignUp;

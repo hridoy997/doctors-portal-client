@@ -6,7 +6,8 @@ import AvailableAppointments from './AvailableAppointments';
 
 const Appointment = () => {
 
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const initiallySelectedDate = new Date();
+    const [selectedDate, setSelectedDate] = useState(initiallySelectedDate);
 
     return (
         <div>
