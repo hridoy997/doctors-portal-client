@@ -13,7 +13,7 @@ const AvailableAppointments = ({selectedDate, setSelectedDate}) => {
     const { data: services, isLoading, refetch } = useQuery({
         queryKey: ['available', formattedDate], 
         queryFn: () => 
-            fetch(`http://localhost:5000/available?date=${formattedDate}`)
+            fetch(`https://doctors-portal-server-2b2c.onrender.com/available?date=${formattedDate}`)
                 .then(res => res.json())
     });
 
@@ -23,8 +23,8 @@ const AvailableAppointments = ({selectedDate, setSelectedDate}) => {
 
     // useEffect(() => {
     //     // fetch('appointmentOptions.json')
-    //     // fetch('http://localhost:5000/service')
-    //     fetch(`http://localhost:5000/available?date=${formattedDate}`)
+    //     // fetch('https://doctors-portal-server-2b2c.onrender.com/service')
+    //     fetch(`https://doctors-portal-server-2b2c.onrender.com/available?date=${formattedDate}`)
     //     .then(res => res.json())
     //     .then(data => setServices(data))
     // },[formattedDate]);

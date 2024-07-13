@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 const UserRow = ({user, index, refetch}) => {
     const {email, roll} = user;
     const makeAdmin = () => {
-        fetch(`http://localhost:5000/user/admin/${email}`, {
+        fetch(`https://doctors-portal-server-2b2c.onrender.com/user/admin/${email}`, {
             method: 'put',
             headers: {
                 authorization: `Bearer ${localStorage.getItem('accessToken')}`
