@@ -24,7 +24,7 @@ const Navbar = () => {
             signOut(auth);
             localStorage.removeItem('accessToken');
             navigate('/');
-        }} className="btn btn-active btn-ghost">SignOut</button> 
+        }}>SignOut</button> 
         :
         <Link to="/login">Login</Link>}</li>
     </>
