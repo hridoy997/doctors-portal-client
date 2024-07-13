@@ -1,23 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
+import { useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
 
 const MyAppointment = () => {
 
     const [user] = useAuthState(auth);
-
     const [appointments, setAppointments] = useState([]);
+    const navigate = useNavigate();
+    
     useEffect(() => {
         if(user){
-            fetch(`http://localhost:5000/booking?patient=${user.email}`)
-            .then(res => res.json())
-            .then(data => setAppointments(data))
+            fetch(`http://localhost:5000/booking?patient=${user.email}`, {
+                method: 'GET',
+                headers: {
+                    authorization : `Bearer ${localStorage.getItem('accessToken')}`,
+                }
+            })
+            .then(res => {
+                // console.log('res', res);
+                if(res.status === 401 || res.status === 403) {
+                    signOut(auth);
+                    localStorage.removeItem('accessToken');
+                    navigate('/');
+                }
+                return res.json()
+            })
+            .then(data => {
+
+                setAppointments(data);
+            })
         }
     }, [user]);
 
     return (
         <div>
-            <h2 className="lg:pl-[5px]">My Appointment: {appointments.length}</h2>
+            <h2 className="text-2xl">My Appointment: {appointments?.length}</h2>
             <div className="overflow-x-auto">
                 <table className="table">
                     {/* head */}
@@ -32,7 +51,7 @@ const MyAppointment = () => {
                     </thead>
                     <tbody>
                         {
-                            appointments.map((appointment, index) => <tr>
+                            appointments.map((appointment, index) => <tr key={index}>
                                 <th>{index + 1}</th>
                                 <td>{appointment.patientName}</td>
                                 <td>{appointment.date}</td>

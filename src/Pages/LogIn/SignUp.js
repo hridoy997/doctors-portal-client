@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCreateUserWithEmailAndPassword, useSignInWithGoogle, useUpdateProfile } from 'react-firebase-hooks/auth';
 import auth from '../../firebase.init';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,6 +17,12 @@ const SignUp = () => {
 
     let signInError ;
 
+    useEffect(() => {
+        if (token) {
+            navigate('/appointment');
+        }
+    }, [token, navigate]);
+
     if(loading || gLoading || updating){
         return <Loading/>
     }
@@ -25,10 +31,6 @@ const SignUp = () => {
         signInError = <p className='text-red-500'>
             <small>{error?.message || gError?.message || updateError?.message}</small>
         </p>
-    }
-
-    if(token){
-        // navigate('/appointment');
     }
 
     const onSubmit = async data => {

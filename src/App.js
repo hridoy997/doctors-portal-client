@@ -13,11 +13,13 @@ import Dashboard from './Pages/Dashboard/Dashboard';
 import MyAppointment from './Pages/Dashboard/MyAppointment';
 import MyReview from './Pages/Dashboard/MyReview';
 import MyHistory from './Pages/Dashboard/MyHistory';
+import Users from './Pages/Dashboard/Users';
+import RequireAdmin from './Pages/LogIn/RequireAdmin';
 
 function App() {
   return (
-    <div data-theme="doctortheme" className='max-w-7xl mx-auto'>
-    {/* <div data-theme="doctortheme" className=''> */}
+    // <div data-theme="doctortheme" className='max-w-7xl mx-auto'>
+    <div data-theme="doctortheme" className=''>
       <Navbar/>
       <Routes>
         <Route path='/' element={<Home/>}></Route>
@@ -33,6 +35,7 @@ function App() {
           <Route index element={<MyAppointment/>}></Route>
           <Route path='review' element={<MyReview/>}></Route>
           <Route path='history' element={<MyHistory/>}></Route>
+          <Route path='users' element={<RequireAdmin><Users/></RequireAdmin>}></Route>
         </Route>
         <Route path='/login' element={<LogIn/>}></Route>
         <Route path='/signUp' element={<SignUp/>}></Route>
